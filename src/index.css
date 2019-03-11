@@ -1,0 +1,19 @@
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.unit-container {
+  width: 100%;
+}
+
+table th,
+td {
+  text-align: center;
+}
+
+.out-of-stock {
+  color: red;
+}
