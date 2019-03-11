@@ -1,52 +1,33 @@
-import React, { Component } from 'react'
+import React from 'react'
 import SearchBar from '../ui/SearchBar'
 import ProductTable from './ProductTable'
 import data from '../data/data.json'
 import { getData } from '../selectors/data.selector'
 
-class FilterableProductTable extends Component {
-  state = {
-    list: [],
-    searchStock: false,
-    search: '',
-    listStocked: [],
-    filterList: []
-  }
+import { inputHook, checkboxHook } from '../hooks/inputHooks'
+import { initHook } from '../hooks/initHooks'
+import { stockedListHook, filterListHook } from '../hooks/listHooks'
 
-  componentDidMount() {
-    this.setState({ list: getData(data) })
-  }
+const FilterableProductTable = () => {
+  const { search, handleSearch } = inputHook()
+  const { searchStock, handleCheckbox } = checkboxHook()
+  const { list } = initHook(getData(data))
+  const { listStocked } = stockedListHook(list, searchStock)
+  const { filterList } = filterListHook(search, listStocked)
 
-  handleCheckbox = stock => this.setState({ searchStock: stock })
-  handleSearch = search => this.setState({ search })
-
-  getStockedList = () =>
-    this.state.list.filter(item =>
-      this.state.searchStock ? item.stocked : true
-    )
-  getFilteredList = list =>
-    list.filter(item =>
-      item.name.toLowerCase().includes(this.state.search.toLowerCase())
-    )
-
-  getResultList = () => this.getFilteredList(this.getStockedList())
-
-  render() {
-    const { search } = this.state
-    return (
-      <div>
-        <header className="center">
-          <h1>IronStore</h1>
-        </header>
-        <SearchBar
-          search={search}
-          setSearch={this.handleSearch}
-          setSearchStock={this.handleCheckbox}
-        />
-        <ProductTable filterList={this.getResultList()} />
-      </div>
-    )
-  }
+  return (
+    <div>
+      <header className="center">
+        <h1>IronStore</h1>
+      </header>
+      <SearchBar
+        search={search}
+        setSearch={handleSearch}
+        setSearchStock={handleCheckbox}
+      />
+      <ProductTable filterList={filterList} />
+    </div>
+  )
 }
 
 export default FilterableProductTable
